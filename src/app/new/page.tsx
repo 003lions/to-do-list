@@ -1,11 +1,16 @@
 import Link from "next/link";
 import {prisma} from "@/db";
-import {TodoItem} from "@/components/TodoItem";
+import { redirect  } from "next/navigation";
 
 async function addTodo(data: FormData) {
     "use server"
     const title = data.get("title")?.valueOf()
+    if (typeof title != "string" || title.length === 0) {
+        throw new Error("Invalid Todo Title")
+    }
     console.log(`Server adding the task: "${title}"`)
+    await prisma.toDo.create({ data: {title, complete: false }})
+    redirect("/")
 }
 
 export default async function Page() {
